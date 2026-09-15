@@ -1,38 +1,183 @@
-Thursday, 19 February 2026
+# Thursday, 19 February 2026
+# Session 30 - Ansible Using Keys, Terraform Advantages, Setup & Installation, EC2 & SG Creation
+## Comprehensive Class Notes, Practical Code Teardown & Execution Guide
 
-Session 30 - Ansible using keys, Terraform advantages, Installation and setup, EC2 and SG creation.
-Class Notes & Project Code Teardown
+---
 
-================================================================================
-Section 1: Workspace Project Mapping & Architecture
-================================================================================
+## Table of Contents
+1. [Class Running Notes & Foundational Concepts](#1-class-running-notes--foundational-concepts)
+   - [Ansible SSH Key-Based Authentication](#ansible-ssh-key-based-authentication)
+   - [Terraform & Infrastructure as Code (IaaC)](#terraform--infrastructure-as-code-iaac)
+   - [Top 6 Advantages of Terraform](#top-6-advantages-of-terraform)
+   - [Prerequisites & Environment Setup](#prerequisites--environment-setup)
+   - [Terraform HCL Syntax & Block Anatomy](#terraform-hcl-syntax--block-anatomy)
+2. [Workspace Project Code Mapping & Architecture](#2-workspace-project-code-mapping--architecture)
+   - [Local File Links & Repository Mapping](#local-file-links--repository-mapping)
+   - [Resource Dependency Architecture (DAG Diagram)](#resource-dependency-architecture-dag-diagram)
+3. [End-to-End Line-by-Line Code Teardown](#3-end-to-end-line-by-line-code-teardown)
+   - [Provider Configuration (`provider.tf`)](#provider-configuration-providertf)
+   - [Security Group (`aws_ec2.tf`: Lines 20-45)](#security-group-virtual-firewall-aws_ec2tf)
+   - [EC2 Instance (`aws_ec2.tf`: Lines 5-14)](#ec2-compute-instance-aws_ec2tf)
+4. [Step-by-Step Hands-on Execution Walkthrough](#4-step-by-step-hands-on-execution-walkthrough)
+   - [Step 1: AWS IAM User & Credentials Configuration](#step-1-aws-iam-user--credentials-configuration)
+   - [Step 2: Navigate to Project Directory](#step-2-navigate-to-project-directory)
+   - [Step 3: Terraform Initialization (`init`)](#step-3-terraform-initialization-init)
+   - [Step 4: Format & Validate (`fmt` & `validate`)](#step-4-format--validate-fmt--validate)
+   - [Step 5: Generate Execution Plan (`plan`)](#step-5-generate-execution-plan-plan)
+   - [Step 6: Provision Infrastructure (`apply`)](#step-6-provision-infrastructure-apply)
+   - [Step 7: Clean Up Resources (`destroy`)](#step-7-clean-up-resources-destroy)
+5. [Terraform CLI Commands & Flags Teardown](#5-terraform-cli-commands--flags-teardown)
+   - [Core Lifecycle Commands Table](#core-lifecycle-commands-table)
+   - [CLI Flags Deep-Dive Table](#cli-flags-deep-dive-table)
+6. [Official Documentation & References](#6-official-documentation--references)
+7. [High-Yield Interview Questions & Answers](#7-high-yield-interview-questions--answers)
+8. [Production Mistakes & Troubleshooting Guide](#8-production-mistakes--troubleshooting-guide)
+9. [Session Metadata & Timestamps](#9-session-metadata--timestamps)
 
-This session's hands-on implementation is located directly in the workspace repository under:
-- **Project Folder**: [`terraform/aws_ec2/`](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2)
-- **Provider Configuration**: [`provider.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/provider.tf#L1-L13)
-- **Infrastructure Code**: [`aws_ec2.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/aws_ec2.tf#L1-L45)
-- **Dependency Lock File**: [`.terraform.lock.hcl`](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/.terraform.lock.hcl)
-- **State File**: [`terraform.tfstate`](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/terraform.tfstate)
+---
 
-### Architecture & Resource Dependency Flow:
+## 1. Class Running Notes & Foundational Concepts
+
+### Ansible SSH Key-Based Authentication
+In automated DevOps pipelines, interactive password prompts block execution. Key-based authentication provides secure, non-interactive SSH communication:
+
+```
++------------------------------------+                  +------------------------------------+
+|       Ansible Control Server       |                  |        Target Managed Node         |
+|                                    |   SSH (TCP:22)   |                                    |
+| - Private Key:                     | ---------------> | - Public Key:                      |
+|   /home/ec2-user/.ssh/id_rsa       |   PrivateKey     |   /home/ec2-user/.ssh/             |
+|   (chmod 400 - strict permissions) |    Matches       |   authorized_keys                  |
+| - ansible.cfg (private_key_file)   |   PublicKey      | - /etc/sudoers.d/ansible           |
+|                                    |                  |   (NOPASSWD: ALL)                  |
++------------------------------------+                  +------------------------------------+
+```
+
+- **Core Rule**:
+  - `Ansible Control Node` -> Holds the **Private Key** (`id_rsa`).
+  - `Managed Node` -> Holds the **Public Key** (`authorized_keys`).
+  - Command: `ssh -i <private-key> ec2-user@<IP>`
+- **Server Setup Steps**:
+  1. Create a dedicated automation user for Ansible on all target servers (`useradd ansible`).
+  2. Grant passwordless sudo access in `/etc/sudoers.d/ansible` (`ansible ALL=(ALL) NOPASSWD: ALL`).
+  3. Ensure SSH key pairs are RSA-based (`ssh-keygen -t rsa -b 4096`).
+  4. Place the private key on the Ansible controller and set permission `chmod 400 /path/to/private-key`.
+  5. Configure the key path in `ansible.cfg` under `private_key_file`.
+
+---
+
+### Terraform & Infrastructure as Code (IaaC)
+- **What is Terraform?**
+  - An open-source **Declarative Infrastructure as Code (IaaC)** tool developed by HashiCorp.
+  - Written in Go; uses **HashiCorp Configuration Language (HCL)**.
+  - Multi-cloud and platform-agnostic: Manages AWS, Azure, GCP, Kubernetes, GitHub, VMware, etc. via modular plugins called **Providers**.
+- **Alternative IaaC Tools**:
+  - **AWS CloudFormation**: AWS-only, uses JSON/YAML.
+  - **Azure ARM / Bicep**: Azure-only declarative templates.
+  - **Pulumi**: Multi-cloud, uses imperative programming languages (TypeScript, Python, Go, C#).
+
+---
+
+### Top 6 Advantages of Terraform
+1. **Version Control & Auditability**:
+   - Infrastructure configurations are tracked in Git.
+   - History of every change is recorded; easy to review pull requests, trace who changed what, and roll back safely.
+2. **Consistent Infrastructure (Environment Parity)**:
+   - Same parameterized code templates deploy DEV, UAT, and PROD without manual drift.
+3. **Automated Lifecycle Management (CRUD)**:
+   - Tracks real-world state and inventory. Detects differences between desired `.tf` files and actual cloud state, managing Create, Read, Update, and Delete operations automatically.
+4. **Cost Optimization & Ephemeral Environments**:
+   - Spin up complete environments for testing and destroy them immediately after validation with `terraform destroy`, eliminating idle resource costs.
+5. **Automatic Dependency Management**:
+   - Builds a Directed Acyclic Graph (DAG) under the hood. Automatically calculates what resource must be created first (e.g., Security Group before EC2 instance) and parallelizes independent resources.
+6. **Reusable Infrastructure (Modules)**:
+   - Avoids repetitive code by packaging standard architectures into DRY (Don't Repeat Yourself) reusable Terraform modules.
+
+---
+
+### Prerequisites & Environment Setup
+To begin working with Terraform on AWS:
+1. **Install Terraform**:
+   - Download the Terraform binary from [developer.hashicorp.com/terraform/install](https://developer.hashicorp.com/terraform/install).
+   - Set up the binary directory in your system `PATH` environment variable.
+2. **Install AWS CLI v2**:
+   - Follow the official AWS CLI v2 installer for Mac, Linux, or Windows.
+3. **Create AWS IAM User & Access Keys**:
+   - Create an IAM User with required infrastructure permissions (e.g., `AmazonEC2FullAccess`).
+   - Generate an **Access Key ID** and **Secret Access Key**; download the `.csv` file.
+4. **Configure AWS Credentials**:
+   - Run `aws configure` on your terminal and provide the downloaded keys, setting default region to `us-east-1`.
+5. **Create Git Repository**:
+   - Create a dedicated repository for your Terraform code to version-control all `.tf` files.
+
+---
+
+### Terraform HCL Syntax & Block Anatomy
+Terraform uses declarative HCL blocks with standard syntax:
+
+```hcl
+block_type "resource_type" "local_name" {
+  argument_key = "argument_value" # Configuration attributes
+}
+```
+
+- **Block Types**:
+  - `terraform`: Configures Terraform engine settings and required provider versions.
+  - `provider`: Configures the target cloud platform plugin (e.g., `aws`, `azurerm`, `google`).
+  - `resource`: Declares infrastructure components to create and manage (e.g., `aws_instance`, `aws_security_group`).
+  - `data`: Queries existing cloud infrastructure without creating new resources.
+  - `variable`: Declares input parameters to make configurations dynamic.
+  - `output`: Exposes values (like Public IP, ARN) to CLI or other modules.
+  - `locals`: Defines local temporary variables within a module.
+  - `module`: Calls reusable child modules.
+
+#### Resource Block Breakdown:
+```hcl
+resource "aws_instance" "example" {
+  ami           = "ami-0220d79f3f480ecf5" # Argument: OS image
+  instance_type = "t3.micro"              # Argument: Size
+}
+```
+- `resource` -> Core Terraform keyword.
+- `"aws_instance"` -> Resource type defined by the AWS Provider API (Fixed syntax).
+- `"example"` -> Local reference name chosen by the engineer for internal Terraform graph referencing.
+- Arguments -> Key-value pairs (`ami`, `instance_type`, `vpc_security_group_ids`, `tags`).
+
+---
+
+## 2. Workspace Project Code Mapping & Architecture
+
+### Local File Links & Repository Mapping
+The practical code for Session 30 resides in the project workspace. Click on the file links below to open them directly in your IDE:
+
+- **Project Directory**: [terraform/aws_ec2/](../../terraform/aws_ec2)
+- **Provider File**: [provider.tf](../../terraform/aws_ec2/provider.tf) | [GitHub Source](https://github.com/RamCharanKolaDevelopment/terraform/blob/main/aws_ec2/provider.tf)
+- **Infrastructure File**: [aws_ec2.tf](../../terraform/aws_ec2/aws_ec2.tf) | [GitHub Source](https://github.com/RamCharanKolaDevelopment/terraform/blob/main/aws_ec2/aws_ec2.tf)
+- **Dependency Lock File**: [.terraform.lock.hcl](../../terraform/aws_ec2/.terraform.lock.hcl)
+- **State File**: [terraform.tfstate](../../terraform/aws_ec2/terraform.tfstate)
+
+---
+
+### Resource Dependency Architecture (DAG Diagram)
+
 ```
 +---------------------------------------------------------------------------------+
 |                               AWS Cloud (us-east-1)                             |
 |                                                                                 |
 |   +-------------------------------------------------------------------------+   |
 |   |                  Security Group: "allow_tls"                            |   |
-|   |                  (Name: "allow-all-terraform")                          |   |
+|   |                  AWS SG Name: "allow-all-terraform"                     |   |
 |   |                                                                         |   |
 |   |   Inbound (Ingress):   Port 0-65535, Protocol ALL (-1) from 0.0.0.0/0  |   |
 |   |   Outbound (Egress):   Port 0-65535, Protocol ALL (-1) to 0.0.0.0/0    |   |
 |   +-------------------------------------------------------------------------+   |
 |                                        ▲                                        |
-|                                        │ Dynamic Reference via DAG              |
+|                                        │ Implicit Dependency via DAG            |
 |                                        │ vpc_security_group_ids = [id]          |
 |                                        ▼                                        |
 |   +-------------------------------------------------------------------------+   |
 |   |                     EC2 Instance: "example"                             |   |
-|   |                     AMI: ami-0220d79f3f480ecf5                          |   |
+|   |                     AMI: ami-0220d79f3f480ecf5 (RHEL-9)                 |   |
 |   |                     Type: t3.micro                                      |   |
 |   |                     Tags: Name = "roboshop", Project = "roboshop"       |   |
 |   +-------------------------------------------------------------------------+   |
@@ -42,11 +187,9 @@ This session's hands-on implementation is located directly in the workspace repo
 
 ---
 
-================================================================================
-Section 2: End-to-End Line-by-Line Code Teardown
-================================================================================
+## 3. End-to-End Line-by-Line Code Teardown
 
-### 1. Provider Configuration: [`provider.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/provider.tf#L1-L13)
+### Provider Configuration: [provider.tf](../../terraform/aws_ec2/provider.tf)
 
 ```hcl
 1: terraform {
@@ -64,21 +207,20 @@ Section 2: End-to-End Line-by-Line Code Teardown
 13: }
 ```
 
-#### Line-by-Line Breakdown:
-- **[Lines 1-8](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/provider.tf#L1-L8) (`terraform { required_providers { ... } }`)**:
-  - The `terraform` block configures core Terraform behavior and specifies dependencies.
-  - `source = "hashicorp/aws"`: Tells Terraform to fetch the official AWS provider plugin maintained by HashiCorp from the public Terraform Registry (`registry.terraform.io/hashicorp/aws`).
-  - `version = "~> 6.0"`: Pessimistic version constraint operator (`~>`). Allows minor updates (e.g., `6.1.0`, `6.2.0`) but locks the major version to avoid breaking API changes.
-- **[Lines 10-13](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/provider.tf#L10-L13) (`provider "aws" { ... }`)**:
-  - `provider "aws"`: Instantiates the AWS provider plugin downloaded during `terraform init`.
-  - `region = "us-east-1"`: Sets the target AWS data center region (N. Virginia). All resources declared in this folder will be created in this region unless explicitly overridden with an alias provider.
-  - Authentication: Notice no access keys are hardcoded here. Terraform automatically discovers credentials configured via `aws configure` (`~/.aws/credentials`) or environment variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`).
+#### Line-by-Line Teardown:
+- **Lines 1-8 (`terraform { required_providers { ... } }`)**:
+  - `terraform`: Global meta-block that configures the behavior of Terraform itself.
+  - `required_providers`: Declares which provider plugins this configuration depends on.
+  - `source = "hashicorp/aws"`: Fully qualified registry address (`registry.terraform.io/hashicorp/aws`). Instructs Terraform to fetch HashiCorp's official AWS provider plugin.
+  - `version = "~> 6.0"`: Pessimistic version constraint operator (`~>`). Restricts updates to non-breaking minor versions (allows `>= 6.0.0` and `< 7.0.0`). Prevents unexpected breaking changes when new major versions release.
+- **Lines 10-13 (`provider "aws" { region = "us-east-1" }`)**:
+  - `provider "aws"`: Initializes the downloaded AWS plugin.
+  - `region = "us-east-1"`: Sets Northern Virginia as the target AWS region for all resources in this directory.
+  - **Zero Hardcoded Secrets**: Notice there are no `access_key` or `secret_key` attributes written here. Terraform adheres to the standard AWS credential chain, automatically reading credentials from `~/.aws/credentials` (populated via `aws configure`) or environment variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`).
 
 ---
 
-### 2. Infrastructure Resources: [`aws_ec2.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/aws_ec2.tf#L1-L45)
-
-#### Part A: Virtual Firewall - Security Group ([Lines 20-45](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/aws_ec2.tf#L20-L45))
+### Security Group (Virtual Firewall): [aws_ec2.tf](../../terraform/aws_ec2/aws_ec2.tf)
 
 ```hcl
 20: resource "aws_security_group" "allow_tls" {
@@ -109,29 +251,26 @@ Section 2: End-to-End Line-by-Line Code Teardown
 45: }
 ```
 
-#### Line-by-Line Breakdown:
-- **[Line 20](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/aws_ec2.tf#L20)**:
-  - `resource`: Core HCL keyword indicating a real cloud infrastructure component.
-  - `"aws_security_group"`: Resource Type recognized by the AWS provider API.
-  - `"allow_tls"`: Local Resource Identifier used within Terraform configurations to reference this security group's attributes (e.g., `aws_security_group.allow_tls.id`).
-- **[Lines 21-22](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/aws_ec2.tf#L21-L22)**:
-  - `name = "allow-all-terraform"`: The actual security group name displayed in AWS Console / CLI.
-  - `description`: Explains the firewall's purpose for auditing and team visibility.
-- **[Lines 24-31](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/aws_ec2.tf#L24-L31) (`egress` block - Outbound Traffic)**:
-  - In AWS, security groups are stateful. However, default Terraform security groups have no egress rules unless explicitly declared.
-  - `protocol = "-1"`: Special flag signifying **all network protocols** (TCP, UDP, ICMP).
-  - `from_port = 0`, `to_port = 0`: When protocol is `"-1"`, ports must be set to `0` to encompass all port ranges.
-  - `cidr_blocks = ["0.0.0.0/0"]`: Permits outbound packets to any IPv4 internet destination.
-  - `ipv6_cidr_blocks = ["::/0"]`: Permits outbound packets to any IPv6 internet destination.
-- **[Lines 33-40](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/aws_ec2.tf#L33-L40) (`ingress` block - Inbound Traffic)**:
-  - Configures incoming network access. In this practice demo, `protocol = "-1"` with `0.0.0.0/0` allows full open ingress traffic.
-  - *Production Note*: In real-world environments, restrict `from_port` and `to_port` to specific application ports (e.g., 22 for SSH, 80 for HTTP, 443 for HTTPS) and specific CIDR IP ranges.
-- **[Lines 42-44](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/aws_ec2.tf#L42-L44)**:
-  - Assigns AWS resource tags for billing, cost allocation, and console searching.
+#### Line-by-Line Teardown:
+- **Line 20**:
+  - `resource "aws_security_group" "allow_tls"`: Creates a security group resource. `"allow_tls"` is the internal Terraform identifier used by other resources in code to access its attributes (e.g., `aws_security_group.allow_tls.id`).
+- **Lines 21-22**:
+  - `name = "allow-all-terraform"`: The external name shown in the AWS Management Console and AWS CLI.
+  - `description`: Explains the firewall's purpose for security audits.
+- **Lines 24-31 (`egress` block - Outbound Rules)**:
+  - **Crucial Terraform Distinction**: Unlike the AWS Web Console (which silently injects an allow-all outbound rule), Terraform creates **completely empty** security groups by default. If you omit the `egress` block in Terraform, your EC2 instance will have no outbound internet access and commands like `yum install` or `apt update` will hang indefinitely!
+  - `protocol = "-1"`: Special identifier representing **all IP protocols** (TCP, UDP, ICMP).
+  - `from_port = 0`, `to_port = 0`: Required when protocol is `"-1"` to denote all port numbers (0-65535).
+  - `cidr_blocks = ["0.0.0.0/0"]`: Permits outbound packets to any IPv4 internet address.
+  - `ipv6_cidr_blocks = ["::/0"]`: Permits outbound packets to any IPv6 internet address.
+- **Lines 33-40 (`ingress` block - Inbound Rules)**:
+  - Defines incoming firewall permissions. Here, `protocol = "-1"` with `cidr_blocks = ["0.0.0.0/0"]` opens all ports for training demonstration. In production, restrict this to specific ports (e.g., port 22 for SSH from a bastion IP, port 80/443 for web traffic).
+- **Lines 42-44 (`tags`)**:
+  - Key-value metadata attached to the AWS Security Group for tracking and billing.
 
 ---
 
-#### Part B: Compute Resource - EC2 Instance ([Lines 5-14](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/aws_ec2.tf#L5-L14))
+### EC2 Compute Instance: [aws_ec2.tf](../../terraform/aws_ec2/aws_ec2.tf)
 
 ```hcl
 5: resource "aws_instance" "example" {
@@ -146,227 +285,273 @@ Section 2: End-to-End Line-by-Line Code Teardown
 14: }
 ```
 
-#### Line-by-Line Breakdown:
-- **[Line 5](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/aws_ec2.tf#L5)**:
-  - Declares an EC2 virtual server named `"example"` for Terraform internal referencing.
-- **[Line 6](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/aws_ec2.tf#L6) (`ami = "ami-0220d79f3f480ecf5"`)**:
-  - Specifies the base Amazon Machine Image containing the operating system (RHEL-9 / CentOS / Amazon Linux).
-  - *Critical Rule*: AMI IDs are unique per AWS region. This ID must exist in `us-east-1`.
-- **[Line 7](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/aws_ec2.tf#L7) (`instance_type = "t3.micro"`)**:
-  - Defines hardware specifications (2 vCPUs, 1 GiB Memory, burstable performance). Eligible for AWS Free Tier.
-- **[Line 8](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/aws_ec2.tf#L8) (`vpc_security_group_ids = [aws_security_group.allow_tls.id]`)**:
-  - **Implicit Dependency / DAG Connection**: Instead of hardcoding an SG ID like `"sg-12345678"`, Terraform references the attribute `.id` of `aws_security_group.allow_tls`.
-  - **Execution Order Determination**: Because `aws_instance.example` requires `aws_security_group.allow_tls.id`, Terraform automatically calculates that the Security Group **must be created first**, waits for AWS to return its generated ID, and then passes it to the EC2 API call.
-- **[Lines 10-13](file:///Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2/aws_ec2.tf#L10-L13)**:
-  - Key-value map of tags. The `Name` tag sets the EC2 instance name in the AWS Management Console list.
+#### Line-by-Line Teardown:
+- **Line 5**:
+  - `resource "aws_instance" "example"`: Instructs the AWS provider to provision an Amazon EC2 virtual machine referenced internally as `example`.
+- **Line 6 (`ami = "ami-0220d79f3f480ecf5"`)**:
+  - The Amazon Machine Image ID containing the bootable operating system (RHEL-9 dev image in `us-east-1`).
+  - *Rule*: AMI IDs are region-specific; this AMI ID is valid specifically in `us-east-1`.
+- **Line 7 (`instance_type = "t3.micro"`)**:
+  - Specifies the instance hardware footprint (2 vCPUs, 1 GiB RAM). Free-tier eligible.
+- **Line 8 (`vpc_security_group_ids = [aws_security_group.allow_tls.id]`)**:
+  - **Implicit Dependency & Dynamic Attribute Reference**: Instead of hardcoding a raw ID like `"sg-01a2b3c4d5"`, Terraform dynamically reads the `.id` attribute generated by the `aws_security_group.allow_tls` resource.
+  - **DAG Resolution**: Because `aws_instance.example` requires `aws_security_group.allow_tls.id`, Terraform's Directed Acyclic Graph automatically enforces that the security group must be created **first**. Once AWS returns the security group ID, Terraform passes it into the EC2 launch API call.
+- **Lines 10-13 (`tags`)**:
+  - `Name = "roboshop"`: Populates the Name column in the AWS EC2 Console.
+  - `Project = "roboshop"`: Custom tag for resource filtering and cost allocation.
 
 ---
 
-================================================================================
-Section 3: Conceptual Theory & Architecture
-================================================================================
+## 4. Step-by-Step Hands-on Execution Walkthrough
 
-### 1. Ansible Key-Based Authentication Architecture:
-```
-+-----------------------------------+               +-----------------------------------+
-|      Ansible Control Server       |               |        Target Managed Node        |
-|                                   |  SSH (TCP:22) |                                   |
-| - /home/ec2-user/.ssh/id_rsa      | ------------> | - /home/ec2-user/.ssh/            |
-|   (Private Key, chmod 400)        |  PrivateKey   |   authorized_keys (Public Key)    |
-| - ansible.cfg (configured path)   |  Matches      | - /etc/sudoers.d/ansible          |
-|                                   |  PublicKey    |   (Passwordless Sudo)             |
-+-----------------------------------+               +-----------------------------------+
-```
-- Remote nodes never hold the private key; only the public key (`.pub`) is installed on targets.
-- Passwordless SSH authentication prevents interactive prompt blocking in automation pipelines.
+All commands below are directly copyable and must be executed in order:
 
-### 2. Infrastructure as Code (IaaC) Comparison:
-| Feature | Terraform | AWS CloudFormation | Azure Bicep / ARM | Pulumi |
-| :--- | :--- | :--- | :--- | :--- |
-| **Cloud Support** | Multi-Cloud (AWS, Azure, GCP, K8s) | AWS Only | Azure Only | Multi-Cloud |
-| **Language** | Declarative (HCL) | Declarative (YAML / JSON) | Declarative (Bicep / JSON) | Imperative (Python, TS, Go) |
-| **State Storage** | Explicit (`terraform.tfstate` / S3) | Implicit (AWS Managed) | Implicit (Azure Managed) | Pulumi Service / S3 |
-| **Ecosystem & Reusability**| Public Terraform Registry Modules | CloudFormation Registry | Azure Verified Modules | Pulumi Registry Packages |
+### Step 1: AWS IAM User & Credentials Configuration
+Ensure your terminal is authenticated with AWS:
 
-### 3. Top 6 Advantages of Terraform:
-1. **Version Control & Auditability**: Infra changes follow software engineering practices (Git branching, PR reviews, commit history, blame/audit tracking).
-2. **Environment Parity**: Eliminates configuration discrepancies between DEV, UAT, and PROD by parameterizing identical templates.
-3. **Automated Lifecycle (CRUD)**: Detects differences between desired code and real-world infrastructure, orchestrating accurate Create, Read, Update, and Delete operations.
-4. **Cost Control & Ephemeral Infra**: Enables automated provisioning for temporary testing and immediate destruction (`terraform destroy`) to eliminate idle resource billing.
-5. **Graph-Based Dependency Resolution**: Constructs a Directed Acyclic Graph (DAG) automatically to parallelize independent resource creations and sequence dependencies correctly.
-6. **Modularity**: Promotes DRY (Don't Repeat Yourself) principle through reusable modules across multiple enterprise teams.
-
----
-
-================================================================================
-Section 4: Step-by-Step Hands-on Execution Walkthrough
-================================================================================
-
-Follow this exact sequence to deploy the infrastructure from terminal:
-
-### Step 1: AWS CLI Authentication
 ```bash
-# 1. Configure AWS CLI credentials
+# Configure your AWS CLI credentials
 aws configure
 # AWS Access Key ID [None]: <YOUR_ACCESS_KEY_ID>
 # AWS Secret Access Key [None]: <YOUR_SECRET_ACCESS_KEY>
 # Default region name [None]: us-east-1
 # Default output format [None]: json
 
-# 2. Verify connection to AWS
+# Verify authentication identity
 aws sts get-caller-identity
 ```
 
-### Step 2: Navigate to Project Folder
+---
+
+### Step 2: Navigate to Project Directory
+> **Golden Rule**: You must always change your working directory to the folder where your `.tf` files reside before running any Terraform commands.
+
 ```bash
 cd /Users/sriramcharankolla/Desktop/DevOps/terraform/aws_ec2
+
+# Verify files are present
 ls -la
-# Verify aws_ec2.tf and provider.tf are present
 ```
 
-### Step 3: Initialize Terraform
+Expected files:
+```text
+aws_ec2.tf
+provider.tf
+```
+
+---
+
+### Step 3: Terraform Initialization (`init`)
+Run this first when starting with a new or cloned repository:
+
 ```bash
 terraform init
 ```
-*What happens*:
-- Scans `provider.tf`.
-- Contacts `registry.terraform.io` and downloads the AWS provider plugin into `.terraform/providers/`.
-- Creates or updates `.terraform.lock.hcl` with cryptographic hashes.
 
-### Step 4: Validate and Format Code
+*What Terraform does under the hood*:
+1. Reads `provider.tf` and identifies `hashicorp/aws` constraint `~> 6.0`.
+2. Connects to `registry.terraform.io` and downloads the AWS provider plugin binary into the local hidden directory `.terraform/providers/`.
+3. Creates or updates `.terraform.lock.hcl` with SHA256 checksums to lock provider dependencies across team members.
+
+---
+
+### Step 4: Format & Validate (`fmt` & `validate`)
+Ensure code is syntactically sound and follows HashiCorp formatting conventions:
+
 ```bash
-terraform fmt      # Rewrites code to standard canonical formatting
-terraform validate # Verifies syntax and internal consistency
+# Canonicalize indentation and layout
+terraform fmt
+
+# Validate internal syntax and references without cloud API calls
+terraform validate
 ```
 
-### Step 5: Generate Execution Plan (Dry Run)
+Expected output:
+```text
+Success! The configuration is valid.
+```
+
+---
+
+### Step 5: Generate Execution Plan (`plan`)
+Perform a dry-run execution to preview proposed infrastructure changes before touching live cloud resources:
+
 ```bash
 terraform plan
 ```
-*Output Analysis*:
-- Shows `Plan: 2 to add, 0 to change, 0 to destroy.`
-- Resources marked with `+` symbol will be created.
 
-### Step 6: Apply Infrastructure to AWS
+*Key details to inspect*:
+- Symbol `+` denotes resources that will be newly created.
+- Review attributes: `ami`, `instance_type`, `vpc_security_group_ids`.
+- Summary line at bottom: `Plan: 2 to add, 0 to change, 0 to destroy.`
+
+---
+
+### Step 6: Provision Infrastructure (`apply`)
+Apply the configuration to create the real AWS resources:
+
 ```bash
 terraform apply
-# When prompted: Enter a value: yes
 ```
-*Automation Alternate*:
+
+- When prompted: `Do you want to perform these actions?`, type: `yes`
+- For non-interactive automated pipelines (CI/CD):
 ```bash
 terraform apply -auto-approve
 ```
-*Result*:
-- Security group `allow-all-terraform` is created first.
-- EC2 instance `roboshop` is launched with the attached security group.
-- State is committed to `terraform.tfstate`.
 
-### Step 7: Teardown & Destroy
+*Execution Result*:
+1. AWS creates the Security Group `allow-all-terraform`.
+2. AWS assigns an ID (e.g., `sg-0abc123456789`).
+3. Terraform injects that ID into the EC2 instance launch request.
+4. AWS launches the EC2 instance `roboshop`.
+5. Terraform writes all metadata and IDs into `terraform.tfstate`.
+
+---
+
+### Step 7: Clean Up Resources (`destroy`)
+Delete all created cloud infrastructure to prevent ongoing AWS billing:
+
+```bash
+terraform destroy
+```
+
+- When prompted, type: `yes`
+- Or run with auto-approval:
 ```bash
 terraform destroy -auto-approve
 ```
-*Result*:
+
+*Teardown Result*:
 - Terraform reads `terraform.tfstate`.
-- Terminates the EC2 instance first, then deletes the security group in reverse dependency order.
+- Reverses dependency order: Terminates the EC2 instance **first**, waits until fully terminated, and then deletes the Security Group.
 
 ---
 
-================================================================================
-Section 5: Commands & CLI Flags Teardown Table
-================================================================================
+## 5. Terraform CLI Commands & Flags Teardown
 
-### Core Lifecycle Commands:
-| Command | Primary Function | When to Use |
+### Core Lifecycle Commands Table
+| Command | Primary Function | When to Use in Workflow |
 | :--- | :--- | :--- |
-| `terraform init` | Initializes directory, downloads provider plugins & modules. | First time running code, or after adding new providers/modules. |
-| `terraform validate` | Checks configuration syntax and semantic validity without cloud calls. | In pre-commit hooks, CI pipelines, and before running plan. |
-| `terraform fmt` | Formats HCL files to HashiCorp standard indentation and style. | Before every git commit to maintain code cleanliness. |
-| `terraform plan` | Compares `.tf` code against state and actual cloud resources. | Before every deployment to preview additions, changes, deletions. |
-| `terraform apply` | Provisions or updates real-world cloud resources via API calls. | To deploy infrastructure changes. |
-| `terraform destroy` | Deletes all infrastructure tracked in the state file. | For tearing down temporary demo/testing environments to stop costs. |
-| `terraform show` | Prints human-readable output of current state or a plan file. | To inspect provisioned attributes (IPs, ARNs, IDs). |
-| `terraform state list` | Lists all resource addresses currently recorded in state. | To audit resources tracked by Terraform. |
+| `terraform init` | Downloads provider plugins, configures backend, locks versions. | First step in any folder, or after updating providers/modules. |
+| `terraform fmt` | Rewrites HCL files to standard indentation and canonical layout. | Before every git commit to maintain consistent code style. |
+| `terraform validate` | Verifies syntax, arguments, and internal consistency offline. | In pre-commit hooks, CI pipelines, and before planning. |
+| `terraform plan` | Compares `.tf` code against state and live cloud to create a diff. | Before every deployment to preview additions, edits, deletes. |
+| `terraform apply` | Provisions or updates real-world cloud resources via provider APIs. | To deploy infrastructure changes to target environments. |
+| `terraform destroy` | Deletes all resources managed by the current state file. | For tearing down temporary demo, test, or feature environments. |
+| `terraform show` | Displays human-readable output of current state or a plan file. | To inspect provisioned attributes (Public IPs, ARNs, VPC IDs). |
+| `terraform state list` | Lists all resource addresses currently recorded in the state file. | Quick audit of resources managed by Terraform. |
 
-### CLI Flags Teardown:
-| Command | Flag | What It Does | Common Real-World Use Case |
+---
+
+### CLI Flags Deep-Dive Table
+| Command | Flag | What It Does | Practical Real-World Use Case |
 | :--- | :--- | :--- | :--- |
-| `terraform init` | `-upgrade` | Upgrades all providers and modules to the newest version allowed by version constraints. | When upgrading AWS provider from `5.x` to `6.x`. |
-| `terraform init` | `-reconfigure` | Ignores existing backend configuration and reinitializes state backend. | When switching remote S3 backend buckets. |
-| `terraform init` | `-migrate-state` | Reinitializes backend and copies existing state to the new backend. | Migrating local state to remote S3 backend. |
-| `terraform plan` | `-out=tfplan` | Saves the execution plan to an encrypted binary file. | In CI/CD pipelines to guarantee `apply` runs the exact previewed plan. |
-| `terraform plan` | `-detailed-exitcode` | Returns exit code `0` (no changes), `2` (changes present), or `1` (error). | In automated drift-detection cron jobs. |
-| `terraform apply` | `-auto-approve` | Bypasses the interactive `yes` prompt confirmation. | In automated CI/CD pipelines (Jenkins, GitHub Actions). |
-| `terraform apply` | `-replace="resource"` | Forces recreation (destroy & re-create) of a specific resource. | When an EC2 instance is corrupted or tainted. |
-| `terraform apply` | `-refresh-only` | Updates state file with real-world infrastructure drift without altering cloud resources. | When resources were modified manually in AWS console. |
-| `terraform apply` | `-var="key=value"` | Passes an input variable value directly via CLI. | `terraform apply -var="instance_type=t3.small"` |
-| `terraform apply` | `-var-file="path"` | Loads variable values from an external `.tfvars` file. | Multi-env deployments: `-var-file=dev.tfvars`. |
-| `terraform destroy` | `-target="resource"` | Restricts destruction to a specific resource address. | Deleting an experimental resource without touching core infra. |
-| `terraform fmt` | `-check` | Checks if files are formatted, exits with non-zero if formatting is needed. | In CI linting pipelines to enforce code style. |
-| `terraform fmt` | `-diff` | Displays the exact formatting diffs without altering files. | Reviewing whitespace adjustments. |
+| `terraform init` | `-upgrade` | Upgrades all provider plugins and modules to the newest allowed version. | Upgrading AWS provider from `5.x` to `6.x`. |
+| `terraform init` | `-reconfigure` | Disregards existing backend settings and reinitializes backend configuration. | Switching between different remote S3 backend buckets. |
+| `terraform init` | `-migrate-state` | Reinitializes backend while migrating existing state data to the new backend. | Migrating from local `terraform.tfstate` to remote S3 backend. |
+| `terraform plan` | `-out=<filename>` | Writes the generated plan to an encrypted binary file. | CI/CD pipelines: Guarantees `apply` runs the exact previewed plan. |
+| `terraform plan` | `-detailed-exitcode` | Returns exit code `0` (no changes), `2` (changes present), or `1` (error). | In drift detection cron jobs to alert on unauthorized changes. |
+| `terraform apply` | `-auto-approve` | Skips interactive approval prompt (`yes`). | Automated CI/CD pipelines (Jenkins, GitHub Actions). |
+| `terraform apply` | `-replace="<address>"` | Marks a specific resource for recreation (destroy & re-create). | Replacing a corrupted or tainted EC2 instance. |
+| `terraform apply` | `-refresh-only` | Updates state file with real-world infrastructure drift without modifying cloud. | Syncing state after someone modified a tag via AWS Console. |
+| `terraform apply` | `-var="key=value"` | Sets an input variable value directly on the CLI. | `terraform apply -var="instance_type=t3.small"` |
+| `terraform apply` | `-var-file="<file>"` | Loads variable values from a specific `.tfvars` file. | Environment deployments: `-var-file="prod.tfvars"`. |
+| `terraform destroy` | `-target="<address>"` | Destroys only the specified resource and its dependents. | Deleting a standalone test instance without destroying the VPC. |
+| `terraform fmt` | `-check` | Checks formatting without modifying files; exits non-zero if misformatted. | CI code quality linting gates. |
+| `terraform fmt` | `-diff` | Shows line-by-line whitespace and formatting diffs. | Reviewing what `terraform fmt` wants to change. |
 
 ---
 
-================================================================================
-Section 6: Official Documentation & Reference Links
-================================================================================
-
-- **Terraform CLI Official Documentation**: [https://developer.hashicorp.com/terraform/cli](https://developer.hashicorp.com/terraform/cli)
-- **Terraform AWS Provider Registry**: [https://registry.terraform.io/providers/hashicorp/aws/latest/docs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
-- **`aws_instance` Resource Documentation**: [https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance)
-- **`aws_security_group` Resource Documentation**: [https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group)
-- **AWS CLI v2 Installation & Configuration Guide**: [https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
+## 6. Official Documentation & References
+- **Terraform CLI Official Documentation**: [developer.hashicorp.com/terraform/cli](https://developer.hashicorp.com/terraform/cli)
+- **Terraform AWS Provider Registry**: [registry.terraform.io/providers/hashicorp/aws/latest/docs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
+- **AWS Instance Resource Docs**: [registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance)
+- **AWS Security Group Resource Docs**: [registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group)
+- **AWS CLI v2 Quickstart Guide**: [docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
 
 ---
 
-================================================================================
-Section 7: High-Yield Interview Questions & Answers
-================================================================================
+## 7. High-Yield Interview Questions & Answers
 
-1. **What is the significance of the `.terraform.lock.hcl` file?**
-   - *Answer*: Introduced in Terraform 0.14, the dependency lock file records the exact provider versions and cryptographic checksums used for the configuration. When multiple team members or CI/CD pipelines run `terraform init`, the lock file guarantees everyone uses identical provider binary hashes, preventing "upstream dependency drift."
-
-2. **What is the difference between Implicit and Explicit Dependencies in Terraform?**
-   - *Answer*:
-     - **Implicit Dependency**: Created automatically when one resource references an attribute of another (e.g., `vpc_security_group_ids = [aws_security_group.allow_tls.id]`). Terraform automatically orders security group creation before the EC2 instance.
-     - **Explicit Dependency**: Declared manually using the `depends_on = [resource]` meta-argument when Terraform cannot deduce the relationship from attribute references (e.g., an EC2 instance requiring an IAM role or S3 bucket to exist first).
-
-3. **What is `terraform.tfstate`, why is it critical, and what risk comes with storing it in Git?**
-   - *Answer*: The state file acts as the "source of truth" and memory for Terraform, mapping declared HCL resources to real-world cloud provider resource IDs and metadata. It should **never be committed to Git** because it may contain sensitive plain-text data (database passwords, private keys) and Git does not provide state locking during concurrent team executions. Instead, use a Remote Backend (AWS S3 with DynamoDB locking).
-
-4. **What happens when an engineer modifies a resource manually in the AWS Console? How does Terraform handle it?**
-   - *Answer*: This is called **Configuration Drift**. When `terraform plan` or `terraform apply` is executed, Terraform first runs a refresh phase against the cloud API. It detects differences between the real cloud state and the `.tfstate` file, proposing changes to revert the infrastructure back to the desired configuration declared in the `.tf` code.
-
-5. **Can `terraform destroy` be restricted to delete only one specific resource?**
-   - *Answer*: Yes, using the `-target` flag: `terraform destroy -target=aws_instance.example`. However, `-target` should be used with extreme caution because it bypasses normal graph resolution and can leave orphaned dependencies.
+### Q1: What is the purpose of `.terraform.lock.hcl` and should it be committed to Git?
+**Answer**:
+Introduced in Terraform 0.14, `.terraform.lock.hcl` is the Dependency Lock File. It records the exact version and cryptographic checksums (hashes) of all provider plugins used in the configuration.
+- **Yes, it MUST be committed to Git**.
+- It guarantees that every team member, build agent, and CI/CD pipeline downloads the exact same provider binaries, preventing "upstream dependency drift" and breaking changes.
 
 ---
 
-================================================================================
-Section 8: Production Mistakes & Troubleshooting
-================================================================================
-
-1. **Executing commands from the wrong working directory**:
-   - *Symptom*: Error: `No configuration files found.`
-   - *Fix*: Terraform commands must always be executed from the folder containing the target `.tf` files (`cd terraform/aws_ec2`).
-2. **Missing `egress` block in custom Security Groups**:
-   - *Symptom*: EC2 instance cannot connect to the internet, `yum`/`dnf` installs hang, or package downloads time out.
-   - *Cause*: Unlike security groups created via the AWS Web Console (which automatically inject an allow-all egress rule), Terraform creates a completely empty security group by default. Always explicitly declare an `egress` block with `protocol = "-1"` and `cidr_blocks = ["0.0.0.0/0"]`.
-3. **AMI ID region mismatch**:
-   - *Symptom*: Error: `InvalidAMIID.NotFound: The image id '[ami-xxxx]' does not exist.`
-   - *Cause*: AMIs are regional. An AMI ID copied from `us-east-1` will fail if the provider is set to `us-west-2` or `ap-south-1`.
-4. **Unencrypted sensitive state in Git repositories**:
-   - *Pitfall*: Forgetting to add `*.tfstate`, `*.tfstate.backup`, and `.terraform/` to `.gitignore`. Always verify `.gitignore` contains these entries before running `git add`.
+### Q2: What is the difference between Implicit and Explicit Dependencies in Terraform?
+**Answer**:
+- **Implicit Dependency**: Created automatically when one resource references an attribute exported by another resource (e.g., `vpc_security_group_ids = [aws_security_group.allow_tls.id]`). Terraform's DAG engine deduces that the security group must be created first without any manual instructions.
+- **Explicit Dependency**: Declared manually using the `depends_on` meta-argument when Terraform cannot automatically deduce the relationship (e.g., an EC2 instance that requires an S3 bucket or IAM Role policy attachment to exist before launching).
 
 ---
 
-Timestamps:
-Ansible SSH Key Authentication = 05:20
-Terraform Introduction & IaaC = 38:50
-Terraform Advantages = 52:10
-Terraform Installation & AWS Configure = 01:10:00
-HCL Syntax & Providers = 01:20:00
-Interview Questions = 01:31:00
-QA = 01:32:38
+### Q3: What is `terraform.tfstate` and why should it NEVER be stored in public Git?
+**Answer**:
+`terraform.tfstate` is Terraform's state database and source of truth. It maps declared HCL resources to real-world cloud provider resource IDs, tracking metadata and attributes.
+- Storing state in Git is a major security and operational anti-pattern because:
+  1. **Secrets Exposure**: State files store resource attributes in plain text, including sensitive database passwords, private keys, and environment variables.
+  2. **No State Locking**: Git cannot prevent race conditions when multiple engineers or CI pipelines run `terraform apply` concurrently, leading to state corruption.
+  3. **Best Practice**: Use an encrypted Remote Backend (e.g., AWS S3 with KMS encryption and DynamoDB state locking).
 
-Doubts Link Clarification AI chat link: 
-https://chat.z.ai/c/f3862eee-15cb-49ca-84e8-41702b207049
+---
+
+### Q4: How does Terraform detect and handle Configuration Drift?
+**Answer**:
+Configuration Drift occurs when infrastructure is modified outside of Terraform (e.g., manual edits in the AWS Web Console or via AWS CLI).
+- When `terraform plan` or `terraform apply` runs, Terraform first executes a **Refresh phase** against the cloud provider's API.
+- It compares live cloud reality against `terraform.tfstate` and your `.tf` code.
+- If drift is detected, Terraform generates a plan to revert the cloud resource back to match the desired state declared in your `.tf` files.
+
+---
+
+### Q5: Can you destroy only a single resource without tearing down the entire infrastructure?
+**Answer**:
+Yes, using targeted destruction: `terraform destroy -target=aws_instance.example`.
+- *Caution*: Targeted operations bypass normal dependency graph resolution and should be reserved only for emergency triage or debugging to avoid leaving orphaned resources.
+
+---
+
+## 8. Production Mistakes & Troubleshooting Guide
+
+1. **Running Commands Outside the Project Folder**:
+   - *Error*: `Error: No configuration files found.`
+   - *Fix*: Always `cd` into the directory containing your `.tf` files before executing `terraform init/plan/apply`.
+2. **Missing `egress` Rule in Custom Security Groups**:
+   - *Symptom*: EC2 instance starts successfully, but SSH hangs, package updates (`yum update`) time out, or applications cannot reach external APIs.
+   - *Cause*: Default Terraform security groups block all outbound traffic unless explicitly declared.
+   - *Fix*: Always include an `egress` block with `protocol = "-1"`, `from_port = 0`, `to_port = 0`, and `cidr_blocks = ["0.0.0.0/0"]`.
+3. **Regional AMI Mismatch**:
+   - *Error*: `InvalidAMIID.NotFound: The image id '[ami-xxxx]' does not exist.`
+   - *Cause*: AMI IDs are unique to each AWS region. An AMI ID from `us-east-1` does not exist in `ap-south-1` or `us-west-2`.
+   - *Fix*: Ensure the AMI ID matches your configured provider region, or query AMIs dynamically using a `data "aws_ami"` block.
+4. **Committing State and Secret Files to Git**:
+   - *Risk*: Plaintext credentials exposed in version control.
+   - *Fix*: Ensure your `.gitignore` includes:
+     ```gitignore
+     *.tfstate
+     *.tfstate.*
+     .terraform/
+     .terraform.lock.hcl # (Optional: keep lock file, ignore state)
+     crash.log
+     override.tf
+     *.tfvars
+     ```
+
+---
+
+## 9. Session Metadata & Timestamps
+
+- **Ansible Key Authentication**: `05:20`
+- **Terraform Introduction & IaaC**: `38:50`
+- **Terraform Top 6 Advantages**: `52:10`
+- **Terraform Installation & AWS Configure**: `01:10:00`
+- **HCL Syntax & Providers Breakdown**: `01:20:00`
+- **Interview Questions**: `01:31:00`
+- **Session Q&A**: `01:32:38`
+
+### Doubts & AI Clarification Link
+- [Session 30 AI Clarification Chat](https://chat.z.ai/c/f3862eee-15cb-49ca-84e8-41702b207049)

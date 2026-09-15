@@ -168,21 +168,23 @@ In `roboshop-infra-dev/10-sg`, 14 distinct security groups are provisioned to en
 Click any file link below to view it directly in your IDE:
 
 #### Project 1: Multi-Layer Foundation (`roboshop-infra-dev`)
-- **VPC Layer (00-vpc)**: [`roboshop-infra-dev/00-vpc/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/00-vpc) | [Relative Path](../../roboshop-infra-dev/00-vpc)
-  - [`00-vpc/main.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/00-vpc/main.tf#L1-L7) | [Relative Link](../../roboshop-infra-dev/00-vpc/main.tf)
-  - [`00-vpc/parameters.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/00-vpc/parameters.tf#L1-L22) | [Relative Link](../../roboshop-infra-dev/00-vpc/parameters.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/00-vpc/parameters.tf)
-  - [`00-vpc/variables.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/00-vpc/variables.tf#L1-L6) | [Relative Link](../../roboshop-infra-dev/00-vpc/variables.tf)
-  - [`00-vpc/outputs.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/00-vpc/outputs.tf#L1-L14) | [Relative Link](../../roboshop-infra-dev/00-vpc/outputs.tf)
-- **Security Group Layer (10-sg)**: [`roboshop-infra-dev/10-sg/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/10-sg) | [Relative Path](../../roboshop-infra-dev/10-sg)
-  - [`10-sg/data.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/10-sg/data.tf#L1-L2) | [Relative Link](../../roboshop-infra-dev/10-sg/data.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/10-sg/data.tf)
-  - [`10-sg/main.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/10-sg/main.tf#L1-L9) | [Relative Link](../../roboshop-infra-dev/10-sg/main.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/10-sg/main.tf)
-  - [`10-sg/variables.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/10-sg/variables.tf#L1-L26) | [Relative Link](../../roboshop-infra-dev/10-sg/variables.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/10-sg/variables.tf)
-  - [`10-sg/parameters.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/10-sg/parameters.tf#L1-L11) | [Relative Link](../../roboshop-infra-dev/10-sg/parameters.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/10-sg/parameters.tf)
+- **VPC Layer (00-vpc)**: [roboshop-infra-dev/00-vpc/](../../roboshop-infra-dev/00-vpc)
+  - [00-vpc/provider.tf](../../roboshop-infra-dev/00-vpc/provider.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/00-vpc/provider.tf)
+  - [00-vpc/main.tf](../../roboshop-infra-dev/00-vpc/main.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/00-vpc/main.tf)
+  - [00-vpc/parameters.tf](../../roboshop-infra-dev/00-vpc/parameters.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/00-vpc/parameters.tf)
+  - [00-vpc/variables.tf](../../roboshop-infra-dev/00-vpc/variables.tf)
+  - [00-vpc/outputs.tf](../../roboshop-infra-dev/00-vpc/outputs.tf)
+- **Security Group Layer (10-sg)**: [roboshop-infra-dev/10-sg/](../../roboshop-infra-dev/10-sg)
+  - [10-sg/provider.tf](../../roboshop-infra-dev/10-sg/provider.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/10-sg/provider.tf)
+  - [10-sg/main.tf](../../roboshop-infra-dev/10-sg/main.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/10-sg/main.tf)
+  - [10-sg/data.tf](../../roboshop-infra-dev/10-sg/data.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/10-sg/data.tf)
+  - [10-sg/variables.tf](../../roboshop-infra-dev/10-sg/variables.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/10-sg/variables.tf)
+  - [10-sg/parameters.tf](../../roboshop-infra-dev/10-sg/parameters.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/10-sg/parameters.tf)
 
 #### Project 2: Reusable Security Group Child Module
-- **Directory**: [`terraform-aws-sg/`](file:///Users/sriramcharankolla/Desktop/DevOps/terraform-aws-sg) | [Relative Path](../../terraform-aws-sg)
-- **Main SG Logic**: [`terraform-aws-sg/main.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/terraform-aws-sg/main.tf#L1-L20) | [Relative Link](../../terraform-aws-sg/main.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/terraform-aws-sg/blob/main/main.tf)
-- **Variables**: [`terraform-aws-sg/variable.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/terraform-aws-sg/variable.tf#L1-L19) | [Relative Link](../../terraform-aws-sg/variable.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/terraform-aws-sg/blob/main/variable.tf)
+- **Directory**: [terraform-aws-sg/](../../terraform-aws-sg)
+- **Main SG Logic**: [terraform-aws-sg/main.tf](../../terraform-aws-sg/main.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/terraform-aws-sg/blob/main/main.tf)
+- **Variables**: [terraform-aws-sg/variable.tf](../../terraform-aws-sg/variable.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/terraform-aws-sg/blob/main/variable.tf)
 
 ---
 
@@ -247,7 +249,8 @@ Click any file link below to view it directly in your IDE:
 
 ## 3. End-to-End Line-by-Line Code Teardown
 
-### Layer 1: Publishing VPC Outputs to SSM ([`roboshop-infra-dev/00-vpc/parameters.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/00-vpc/parameters.tf#L1-L22) | [Relative](../../roboshop-infra-dev/00-vpc/parameters.tf))
+### Layer 1: Publishing VPC Outputs to SSM (00-vpc/parameters.tf)
+> **File**: [roboshop-infra-dev/00-vpc/parameters.tf](../../roboshop-infra-dev/00-vpc/parameters.tf)
 
 ```hcl
 1: resource "aws_ssm_parameter" "vpc_id" {
@@ -284,9 +287,11 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-### Layer 2: Consuming VPC & Creating SGs ([`roboshop-infra-dev/10-sg/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/10-sg) | [Relative](../../roboshop-infra-dev/10-sg))
+### Layer 2: Consuming VPC & Creating SGs (10-sg)
+> **Layer Directory**: [roboshop-infra-dev/10-sg/](../../roboshop-infra-dev/10-sg)
 
-#### [`data.tf` in `10-sg/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/10-sg/data.tf#L1-L2) | [Relative](../../roboshop-infra-dev/10-sg/data.tf)
+#### data.tf in 10-sg/
+> **File**: [roboshop-infra-dev/10-sg/data.tf](../../roboshop-infra-dev/10-sg/data.tf)
 
 ```hcl
 1: data "aws_ssm_parameter" "vpc_id" {
@@ -297,7 +302,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-#### [`variables.tf` in `10-sg/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/10-sg/variables.tf#L1-L26) | [Relative](../../roboshop-infra-dev/10-sg/variables.tf)
+#### variables.tf in 10-sg/
+> **File**: [roboshop-infra-dev/10-sg/variables.tf](../../roboshop-infra-dev/10-sg/variables.tf)
 
 ```hcl
 9: variable "sg_names" {
@@ -324,7 +330,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-#### [`main.tf` in `10-sg/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/10-sg/main.tf#L1-L9) | [Relative](../../roboshop-infra-dev/10-sg/main.tf)
+#### main.tf in 10-sg/
+> **File**: [roboshop-infra-dev/10-sg/main.tf](../../roboshop-infra-dev/10-sg/main.tf)
 
 ```hcl
 1: module "sg" {
@@ -343,7 +350,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-#### [`parameters.tf` in `10-sg/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/10-sg/parameters.tf#L1-L11) | [Relative](../../roboshop-infra-dev/10-sg/parameters.tf)
+#### parameters.tf in 10-sg/
+> **File**: [roboshop-infra-dev/10-sg/parameters.tf](../../roboshop-infra-dev/10-sg/parameters.tf)
 
 ```hcl
 7: resource "aws_ssm_parameter" "sg_id" {
@@ -357,7 +365,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-### Child Module: Reusable Security Group ([`terraform-aws-sg/main.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/terraform-aws-sg/main.tf#L1-L20) | [Relative](../../terraform-aws-sg/main.tf))
+### Child Module: Reusable Security Group (terraform-aws-sg/main.tf)
+> **File**: [terraform-aws-sg/main.tf](../../terraform-aws-sg/main.tf)
 
 ```hcl
 1: resource "aws_security_group" "main" {

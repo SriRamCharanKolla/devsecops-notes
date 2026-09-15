@@ -154,18 +154,19 @@ To master cloud architecture, examine how enterprise technology companies operat
 Click any file link below to view it directly in your IDE:
 
 #### Project 1: Database Tier & IAM (`roboshop-infra-dev/40-databases`)
-- **Directory**: [`roboshop-infra-dev/40-databases/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases) | [Relative Path](../../roboshop-infra-dev/40-databases)
-  - [`40-databases/iam.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/iam.tf#L1-L44) | [Relative Link](../../roboshop-infra-dev/40-databases/iam.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/iam.tf)
-  - [`40-databases/mysql-iam-policy.json`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/mysql-iam-policy.json#L1-L17) | [Relative Link](../../roboshop-infra-dev/40-databases/mysql-iam-policy.json) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/mysql-iam-policy.json)
-  - [`40-databases/main.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/main.tf#L79-L92) | [Relative Link](../../roboshop-infra-dev/40-databases/main.tf#L79-L92) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/main.tf)
-  - [`40-databases/bootstrap.sh`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/bootstrap.sh#L1-L12) | [Relative Link](../../roboshop-infra-dev/40-databases/bootstrap.sh)
+- **Directory**: [roboshop-infra-dev/40-databases/](../../roboshop-infra-dev/40-databases)
+  - [40-databases/iam.tf](../../roboshop-infra-dev/40-databases/iam.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/iam.tf)
+  - [40-databases/mysql-iam-policy.json](../../roboshop-infra-dev/40-databases/mysql-iam-policy.json) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/mysql-iam-policy.json)
+  - [40-databases/main.tf](../../roboshop-infra-dev/40-databases/main.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/main.tf)
+  - [40-databases/bootstrap.sh](../../roboshop-infra-dev/40-databases/bootstrap.sh)
 
 #### Project 2: Internal Application Load Balancer (`roboshop-infra-dev/50-backend-alb`)
-- **Directory**: [`roboshop-infra-dev/50-backend-alb/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/50-backend-alb) | [Relative Path](../../roboshop-infra-dev/50-backend-alb)
-  - [`50-backend-alb/main.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/50-backend-alb/main.tf#L1-L46) | [Relative Link](../../roboshop-infra-dev/50-backend-alb/main.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/50-backend-alb/main.tf)
-  - [`50-backend-alb/data.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/50-backend-alb/data.tf#L1-L10) | [Relative Link](../../roboshop-infra-dev/50-backend-alb/data.tf)
-  - [`50-backend-alb/locals.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/50-backend-alb/locals.tf#L1-L10) | [Relative Link](../../roboshop-infra-dev/50-backend-alb/locals.tf)
-  - [`50-backend-alb/parameters.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/50-backend-alb/parameters.tf#L1-L7) | [Relative Link](../../roboshop-infra-dev/50-backend-alb/parameters.tf)
+- **Directory**: [roboshop-infra-dev/50-backend-alb/](../../roboshop-infra-dev/50-backend-alb)
+  - [50-backend-alb/provider.tf](../../roboshop-infra-dev/50-backend-alb/provider.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/50-backend-alb/provider.tf)
+  - [50-backend-alb/main.tf](../../roboshop-infra-dev/50-backend-alb/main.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/50-backend-alb/main.tf)
+  - [50-backend-alb/data.tf](../../roboshop-infra-dev/50-backend-alb/data.tf)
+  - [50-backend-alb/locals.tf](../../roboshop-infra-dev/50-backend-alb/locals.tf)
+  - [50-backend-alb/parameters.tf](../../roboshop-infra-dev/50-backend-alb/parameters.tf)
 
 ---
 
@@ -259,9 +260,11 @@ Click any file link below to view it directly in your IDE:
 
 ## 3. End-to-End Line-by-Line Code Teardown
 
-### Layer 5: Database IAM & Policy Rendering ([`roboshop-infra-dev/40-databases/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases) | [Relative](../../roboshop-infra-dev/40-databases))
+### Layer 5: Database IAM & Policy Rendering (40-databases)
+> **Layer Directory**: [roboshop-infra-dev/40-databases/](../../roboshop-infra-dev/40-databases)
 
-#### [`iam.tf` in `40-databases/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/iam.tf#L1-L44) | [Relative](../../roboshop-infra-dev/40-databases/iam.tf)
+#### iam.tf in 40-databases/
+> **File**: [roboshop-infra-dev/40-databases/iam.tf](../../roboshop-infra-dev/40-databases/iam.tf)
 
 ```hcl
 1: resource "aws_iam_role" "mysql" {
@@ -308,7 +311,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-#### [`mysql-iam-policy.json` in `40-databases/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/mysql-iam-policy.json#L1-L17) | [Relative](../../roboshop-infra-dev/40-databases/mysql-iam-policy.json)
+#### mysql-iam-policy.json in 40-databases/
+> **File**: [roboshop-infra-dev/40-databases/mysql-iam-policy.json](../../roboshop-infra-dev/40-databases/mysql-iam-policy.json)
 
 ```json
 1: {
@@ -333,7 +337,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-#### [`main.tf` in `40-databases/` (MySQL Instance Attachment)](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/main.tf#L79-L92) | [Relative](../../roboshop-infra-dev/40-databases/main.tf#L79-L92)
+#### main.tf in 40-databases/ (MySQL Instance Attachment)
+> **File**: [roboshop-infra-dev/40-databases/main.tf](../../roboshop-infra-dev/40-databases/main.tf)
 
 ```hcl
 79: resource "aws_instance" "mysql" {
@@ -353,9 +358,11 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-### Layer 6: Internal Application Load Balancer ([`roboshop-infra-dev/50-backend-alb/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/50-backend-alb) | [Relative](../../roboshop-infra-dev/50-backend-alb))
+### Layer 6: Internal Application Load Balancer (50-backend-alb)
+> **Layer Directory**: [roboshop-infra-dev/50-backend-alb/](../../roboshop-infra-dev/50-backend-alb)
 
-#### [`main.tf` in `50-backend-alb/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/50-backend-alb/main.tf#L1-L46) | [Relative](../../roboshop-infra-dev/50-backend-alb/main.tf)
+#### main.tf in 50-backend-alb/
+> **File**: [roboshop-infra-dev/50-backend-alb/main.tf](../../roboshop-infra-dev/50-backend-alb/main.tf)
 
 ```hcl
 1: resource "aws_lb" "backend_alb" {
@@ -416,7 +423,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-#### [`parameters.tf` in `50-backend-alb/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/50-backend-alb/parameters.tf#L1-L7) | [Relative](../../roboshop-infra-dev/50-backend-alb/parameters.tf)
+#### parameters.tf in 50-backend-alb/
+> **File**: [roboshop-infra-dev/50-backend-alb/parameters.tf](../../roboshop-infra-dev/50-backend-alb/parameters.tf)
 
 ```hcl
 1: resource "aws_ssm_parameter" "backend_alb_listener_arn" {

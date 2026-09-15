@@ -129,16 +129,17 @@ Provisioning stateful backend data stores involves a synchronized 2-step pipelin
 Click any file link below to view it directly in your IDE:
 
 #### Project: Databases & Configuration Management (`roboshop-infra-dev/40-databases`)
-- **Directory**: [`roboshop-infra-dev/40-databases/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases) | [Relative Path](../../roboshop-infra-dev/40-databases)
-  - [`40-databases/main.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/main.tf#L1-L156) | [Relative Link](../../roboshop-infra-dev/40-databases/main.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/main.tf)
-  - [`40-databases/bootstrap.sh`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/bootstrap.sh#L1-L12) | [Relative Link](../../roboshop-infra-dev/40-databases/bootstrap.sh) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/bootstrap.sh)
-  - [`40-databases/data.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/data.tf#L1-L39) | [Relative Link](../../roboshop-infra-dev/40-databases/data.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/data.tf)
-  - [`40-databases/locals.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/locals.tf#L1-L21) | [Relative Link](../../roboshop-infra-dev/40-databases/locals.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/locals.tf)
-  - [`40-databases/iam.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/iam.tf#L1-L44) | [Relative Link](../../roboshop-infra-dev/40-databases/iam.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/iam.tf)
-  - [`40-databases/r53.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/r53.tf#L1-L35) | [Relative Link](../../roboshop-infra-dev/40-databases/r53.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/r53.tf)
-  - [`40-databases/parameter.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/parameter.tf#L1-L7) | [Relative Link](../../roboshop-infra-dev/40-databases/parameter.tf)
-  - [`40-databases/variables.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/variables.tf#L1-L15) | [Relative Link](../../roboshop-infra-dev/40-databases/variables.tf)
-  - [`40-databases/mysql-iam-policy.json`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/mysql-iam-policy.json#L1-L18) | [Relative Link](../../roboshop-infra-dev/40-databases/mysql-iam-policy.json)
+- **Directory**: [roboshop-infra-dev/40-databases/](../../roboshop-infra-dev/40-databases)
+  - [40-databases/provider.tf](../../roboshop-infra-dev/40-databases/provider.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/provider.tf)
+  - [40-databases/main.tf](../../roboshop-infra-dev/40-databases/main.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/main.tf)
+  - [40-databases/bootstrap.sh](../../roboshop-infra-dev/40-databases/bootstrap.sh) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/bootstrap.sh)
+  - [40-databases/data.tf](../../roboshop-infra-dev/40-databases/data.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/data.tf)
+  - [40-databases/locals.tf](../../roboshop-infra-dev/40-databases/locals.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/locals.tf)
+  - [40-databases/iam.tf](../../roboshop-infra-dev/40-databases/iam.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/iam.tf)
+  - [40-databases/r53.tf](../../roboshop-infra-dev/40-databases/r53.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/40-databases/r53.tf)
+  - [40-databases/parameter.tf](../../roboshop-infra-dev/40-databases/parameter.tf)
+  - [40-databases/variables.tf](../../roboshop-infra-dev/40-databases/variables.tf)
+  - [40-databases/mysql-iam-policy.json](../../roboshop-infra-dev/40-databases/mysql-iam-policy.json)
 
 ---
 
@@ -245,9 +246,11 @@ Click any file link below to view it directly in your IDE:
 
 ## 3. End-to-End Line-by-Line Code Teardown
 
-### Layer 5: Databases Infrastructure ([`roboshop-infra-dev/40-databases/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases) | [Relative](../../roboshop-infra-dev/40-databases))
+### Layer 5: Databases Infrastructure (40-databases)
+> **Layer Directory**: [roboshop-infra-dev/40-databases/](../../roboshop-infra-dev/40-databases)
 
-#### [`bootstrap.sh` in `40-databases/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/bootstrap.sh#L1-L12) | [Relative](../../roboshop-infra-dev/40-databases/bootstrap.sh)
+#### bootstrap.sh in 40-databases/
+> **File**: [roboshop-infra-dev/40-databases/bootstrap.sh](../../roboshop-infra-dev/40-databases/bootstrap.sh)
 
 ```bash
 1: #!/bin/bash
@@ -272,7 +275,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-#### [`data.tf` in `40-databases/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/data.tf#L1-L39) | [Relative](../../roboshop-infra-dev/40-databases/data.tf)
+#### data.tf in 40-databases/
+> **File**: [roboshop-infra-dev/40-databases/data.tf](../../roboshop-infra-dev/40-databases/data.tf)
 
 ```hcl
 1: data "aws_ami" "joindevops" {
@@ -304,7 +308,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-#### [`locals.tf` in `40-databases/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/locals.tf#L1-L21) | [Relative](../../roboshop-infra-dev/40-databases/locals.tf)
+#### locals.tf in 40-databases/
+> **File**: [roboshop-infra-dev/40-databases/locals.tf](../../roboshop-infra-dev/40-databases/locals.tf)
 
 ```hcl
 1: locals {
@@ -336,7 +341,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-#### [`main.tf` in `40-databases/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/main.tf#L1-L156) | [Relative](../../roboshop-infra-dev/40-databases/main.tf)
+#### main.tf in 40-databases/
+> **File**: [roboshop-infra-dev/40-databases/main.tf](../../roboshop-infra-dev/40-databases/main.tf)
 
 ```hcl
 1: resource "aws_instance" "mongodb" {
@@ -386,7 +392,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-#### [`iam.tf` in `40-databases/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/iam.tf#L1-L44) | [Relative](../../roboshop-infra-dev/40-databases/iam.tf)
+#### iam.tf in 40-databases/
+> **File**: [roboshop-infra-dev/40-databases/iam.tf](../../roboshop-infra-dev/40-databases/iam.tf)
 
 ```hcl
 1: resource "aws_iam_role" "mysql" {
@@ -427,7 +434,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-#### [`r53.tf` in `40-databases/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/40-databases/r53.tf#L1-L35) | [Relative](../../roboshop-infra-dev/40-databases/r53.tf)
+#### r53.tf in 40-databases/
+> **File**: [roboshop-infra-dev/40-databases/r53.tf](../../roboshop-infra-dev/40-databases/r53.tf)
 
 ```hcl
 1: resource "aws_route53_record" "mongodb" {

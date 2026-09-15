@@ -156,21 +156,23 @@ An EC2 instance cannot assume an IAM Role directly through standard user binding
 Click any file link below to view it directly in your IDE:
 
 #### Project: Multi-Tier Foundation (`roboshop-infra-dev`)
-- **VPC Layer (`00-vpc/`)**: [`roboshop-infra-dev/00-vpc/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/00-vpc) | [Relative Path](../../roboshop-infra-dev/00-vpc)
-  - [`00-vpc/parameters.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/00-vpc/parameters.tf#L1-L22) | [Relative Link](../../roboshop-infra-dev/00-vpc/parameters.tf)
-- **Security Group Layer (`10-sg/`)**: [`roboshop-infra-dev/10-sg/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/10-sg) | [Relative Path](../../roboshop-infra-dev/10-sg)
-  - [`10-sg/main.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/10-sg/main.tf#L1-L9) | [Relative Link](../../roboshop-infra-dev/10-sg/main.tf)
-  - [`10-sg/parameters.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/10-sg/parameters.tf#L1-L11) | [Relative Link](../../roboshop-infra-dev/10-sg/parameters.tf)
-- **Security Group Rules Layer (`20-sg-rules/`)**: [`roboshop-infra-dev/20-sg-rules/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/20-sg-rules) | [Relative Path](../../roboshop-infra-dev/20-sg-rules)
-  - [`20-sg-rules/data.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/20-sg-rules/data.tf#L1-L63) | [Relative Link](../../roboshop-infra-dev/20-sg-rules/data.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/20-sg-rules/data.tf)
-  - [`20-sg-rules/locals.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/20-sg-rules/locals.tf#L1-L17) | [Relative Link](../../roboshop-infra-dev/20-sg-rules/locals.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/20-sg-rules/locals.tf)
-  - [`20-sg-rules/main.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/20-sg-rules/main.tf#L1-L355) | [Relative Link](../../roboshop-infra-dev/20-sg-rules/main.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/20-sg-rules/main.tf)
-  - [`20-sg-rules/sg_rules.yaml`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/20-sg-rules/sg_rules.yaml#L1-L20) | [Relative Link](../../roboshop-infra-dev/20-sg-rules/sg_rules.yaml) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/20-sg-rules/sg_rules.yaml)
-- **Bastion Host & Compute Layer (`30-bastion/`)**: [`roboshop-infra-dev/30-bastion/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/30-bastion) | [Relative Path](../../roboshop-infra-dev/30-bastion)
-  - [`30-bastion/data.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/30-bastion/data.tf#L1-L27) | [Relative Link](../../roboshop-infra-dev/30-bastion/data.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/30-bastion/data.tf)
-  - [`30-bastion/locals.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/30-bastion/locals.tf#L1-L11) | [Relative Link](../../roboshop-infra-dev/30-bastion/locals.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/30-bastion/locals.tf)
-  - [`30-bastion/main.tf`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/30-bastion/main.tf#L1-L70) | [Relative Link](../../roboshop-infra-dev/30-bastion/main.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/30-bastion/main.tf)
-  - [`30-bastion/bastion.sh`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/30-bastion/bastion.sh#L1-L38) | [Relative Link](../../roboshop-infra-dev/30-bastion/bastion.sh) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/30-bastion/bastion.sh)
+- **VPC Layer (`00-vpc/`)**: [roboshop-infra-dev/00-vpc/](../../roboshop-infra-dev/00-vpc)
+  - [00-vpc/parameters.tf](../../roboshop-infra-dev/00-vpc/parameters.tf)
+- **Security Group Layer (`10-sg/`)**: [roboshop-infra-dev/10-sg/](../../roboshop-infra-dev/10-sg)
+  - [10-sg/main.tf](../../roboshop-infra-dev/10-sg/main.tf)
+  - [10-sg/parameters.tf](../../roboshop-infra-dev/10-sg/parameters.tf)
+- **Security Group Rules Layer (`20-sg-rules/`)**: [roboshop-infra-dev/20-sg-rules/](../../roboshop-infra-dev/20-sg-rules)
+  - [20-sg-rules/provider.tf](../../roboshop-infra-dev/20-sg-rules/provider.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/20-sg-rules/provider.tf)
+  - [20-sg-rules/main.tf](../../roboshop-infra-dev/20-sg-rules/main.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/20-sg-rules/main.tf)
+  - [20-sg-rules/data.tf](../../roboshop-infra-dev/20-sg-rules/data.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/20-sg-rules/data.tf)
+  - [20-sg-rules/locals.tf](../../roboshop-infra-dev/20-sg-rules/locals.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/20-sg-rules/locals.tf)
+  - [20-sg-rules/sg_rules.yaml](../../roboshop-infra-dev/20-sg-rules/sg_rules.yaml) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/20-sg-rules/sg_rules.yaml)
+- **Bastion Host & Compute Layer (`30-bastion/`)**: [roboshop-infra-dev/30-bastion/](../../roboshop-infra-dev/30-bastion)
+  - [30-bastion/provider.tf](../../roboshop-infra-dev/30-bastion/provider.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/30-bastion/provider.tf)
+  - [30-bastion/main.tf](../../roboshop-infra-dev/30-bastion/main.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/30-bastion/main.tf)
+  - [30-bastion/data.tf](../../roboshop-infra-dev/30-bastion/data.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/30-bastion/data.tf)
+  - [30-bastion/locals.tf](../../roboshop-infra-dev/30-bastion/locals.tf) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/30-bastion/locals.tf)
+  - [30-bastion/bastion.sh](../../roboshop-infra-dev/30-bastion/bastion.sh) | [GitHub Source](https://github.com/SriRamCharanKolla/roboshop-infra-dev/blob/main/30-bastion/bastion.sh)
 
 ---
 
@@ -241,9 +243,11 @@ Click any file link below to view it directly in your IDE:
 
 ## 3. End-to-End Line-by-Line Code Teardown
 
-### Layer 3: Security Group Rules ([`roboshop-infra-dev/20-sg-rules/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/20-sg-rules) | [Relative](../../roboshop-infra-dev/20-sg-rules))
+### Layer 3: Security Group Rules (20-sg-rules)
+> **Layer Directory**: [roboshop-infra-dev/20-sg-rules/](../../roboshop-infra-dev/20-sg-rules)
 
-#### [`data.tf` in `20-sg-rules/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/20-sg-rules/data.tf#L1-L63) | [Relative](../../roboshop-infra-dev/20-sg-rules/data.tf)
+#### data.tf in 20-sg-rules/
+> **File**: [roboshop-infra-dev/20-sg-rules/data.tf](../../roboshop-infra-dev/20-sg-rules/data.tf)
 
 ```hcl
 1: data "http" "my_public_ip_v4" {
@@ -274,7 +278,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-#### [`locals.tf` in `20-sg-rules/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/20-sg-rules/locals.tf#L1-L17) | [Relative](../../roboshop-infra-dev/20-sg-rules/locals.tf)
+#### locals.tf in 20-sg-rules/
+> **File**: [roboshop-infra-dev/20-sg-rules/locals.tf](../../roboshop-infra-dev/20-sg-rules/locals.tf)
 
 ```hcl
 1: locals {
@@ -290,7 +295,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-#### [`main.tf` in `20-sg-rules/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/20-sg-rules/main.tf#L1-L355) | [Relative](../../roboshop-infra-dev/20-sg-rules/main.tf)
+#### main.tf in 20-sg-rules/
+> **File**: [roboshop-infra-dev/20-sg-rules/main.tf](../../roboshop-infra-dev/20-sg-rules/main.tf)
 
 ```hcl
 1: # Bastion
@@ -339,7 +345,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-#### [`sg_rules.yaml` in `20-sg-rules/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/20-sg-rules/sg_rules.yaml#L1-L20) | [Relative](../../roboshop-infra-dev/20-sg-rules/sg_rules.yaml)
+#### sg_rules.yaml in 20-sg-rules/
+> **File**: [roboshop-infra-dev/20-sg-rules/sg_rules.yaml](../../roboshop-infra-dev/20-sg-rules/sg_rules.yaml)
 
 ```yaml
 1: bastion:
@@ -365,9 +372,11 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-### Layer 4: Bastion Host & IAM Provisioning ([`roboshop-infra-dev/30-bastion/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/30-bastion) | [Relative](../../roboshop-infra-dev/30-bastion))
+### Layer 4: Bastion Host & IAM Provisioning (30-bastion)
+> **Layer Directory**: [roboshop-infra-dev/30-bastion/](../../roboshop-infra-dev/30-bastion)
 
-#### [`data.tf` in `30-bastion/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/30-bastion/data.tf#L1-L27) | [Relative](../../roboshop-infra-dev/30-bastion/data.tf)
+#### data.tf in 30-bastion/
+> **File**: [roboshop-infra-dev/30-bastion/data.tf](../../roboshop-infra-dev/30-bastion/data.tf)
 
 ```hcl
 1: data "aws_ami" "joindevops" {
@@ -403,7 +412,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-#### [`locals.tf` in `30-bastion/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/30-bastion/locals.tf#L1-L11) | [Relative](../../roboshop-infra-dev/30-bastion/locals.tf)
+#### locals.tf in 30-bastion/
+> **File**: [roboshop-infra-dev/30-bastion/locals.tf](../../roboshop-infra-dev/30-bastion/locals.tf)
 
 ```hcl
 1: locals {
@@ -422,7 +432,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-#### [`main.tf` in `30-bastion/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/30-bastion/main.tf#L1-L70) | [Relative](../../roboshop-infra-dev/30-bastion/main.tf)
+#### main.tf in 30-bastion/
+> **File**: [roboshop-infra-dev/30-bastion/main.tf](../../roboshop-infra-dev/30-bastion/main.tf)
 
 ```hcl
 1: resource "aws_instance" "bastion" {
@@ -486,7 +497,8 @@ Click any file link below to view it directly in your IDE:
 
 ---
 
-#### [`bastion.sh` in `30-bastion/`](file:///Users/sriramcharankolla/Desktop/DevOps/roboshop-infra-dev/30-bastion/bastion.sh#L1-L38) | [Relative](../../roboshop-infra-dev/30-bastion/bastion.sh)
+#### bastion.sh in 30-bastion/
+> **File**: [roboshop-infra-dev/30-bastion/bastion.sh](../../roboshop-infra-dev/30-bastion/bastion.sh)
 
 ```bash
 1: #!/bin/bash

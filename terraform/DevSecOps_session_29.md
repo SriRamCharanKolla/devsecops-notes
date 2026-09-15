@@ -2,45 +2,104 @@ Monday, 17 August 2026
 
 Session 29 - Include vs import role, Dynamic inventory, Vault, SSM parameter store, Secrets manager, Parallel execution, Ansible disadvantages.
 Class Notes
-import_role and include_role
+
+import_role vs include_role
 ===========================
-1. tags applied to import_role will be automatically applied to all the tasks inside it.
-2. tags applied to include_role will not be cascaded.
-3. import_roles parse the playbook before execution, it is static. include_role is dynamic, it will directly execute the playbook, it will not parse like import_role before execution.
-4. conditions applied to import_role is applied to all the tasks, include_role will not care the condition applied to it.
-5. You cannot use loops on 'import_role' statements. You should use 'include_role' instead
+| Feature | `import_role` (Static) | `include_role` (Dynamic) |
+| :--- | :--- | :--- |
+| **Parsing Time** | Pre-parsed before playbook execution starts (Static). | Parsed dynamically at runtime when the task is reached (Dynamic). |
+| **Tags Behavior** | Tags applied to `import_role` automatically cascade to all tasks inside the role. | Tags applied to `include_role` do not cascade to tasks inside the role. |
+| **Conditions (`when`)** | Condition is evaluated and applied to every task inside the role. | Condition applies only to whether the role gets included, not individual tasks. |
+| **Loops (`loop`)** | Cannot use loops directly on `import_role`. | Can use loops directly on `include_role`. |
+| **Handlers** | Handlers are imported upfront. | Handlers are recognized only after the role is included. |
 
-dynamic inventory
+Dynamic Inventory
 =================
-scaling environment, servers are dynamically created and destroyed based on traffic.. we cant use static inventory file, we need to dynamically query the instances. We can use dynamic inventory plugin from AWS passing region, name of the instances, runnning state, etc.
+In modern auto-scaling cloud environments, servers are created and destroyed dynamically based on traffic. 
+- Static inventory files (`inventory.ini` or `hosts`) cannot keep up because IP addresses change constantly.
+- We need to query instances dynamically from cloud providers like AWS using the `aws_ec2` inventory plugin.
+- Filters can be applied by AWS Region, Instance Tags (e.g., `Name: frontend-dev`), and Instance State (`running`).
 
-go to us-east-1, search frontend-dev running, get the IP address
+Example flow:
+Go to `us-east-1` -> Search for instances matching `Name: frontend-dev` and state `running` -> Automatically fetch private/public IP addresses into Ansible.
 
-Vault
-=====
-ansible-vault create valut.yaml
+Ansible Vault & Secret Management
+=================================
+Source code should be separated into:
+1. Code (playbooks, roles, tasks) -> stored in Git repository.
+2. Configuration:
+   - Non-confidential: URLs, port numbers, environment names.
+   - Confidential / Sensitive: Passwords, API keys, database credentials, certificates.
 
-code -> configuration(confidential, non-confidential)
+Methods to manage secrets:
+1. **Ansible Vault**: Encrypts sensitive YAML files or variable files directly using AES-256 encryption.
+2. **AWS Systems Manager (SSM) Parameter Store**: Cloud platform-level key-value store for configurations and SecureString secrets.
+3. **AWS Secrets Manager**: Managed cloud service with automatic secret rotation, fine-grained IAM policies, and cross-account access.
 
-AWS -> Platform
+Parallel Execution (Forks vs Serial)
+====================================
+By default, Ansible executes tasks in parallel across hosts using `forks`:
 
-parellel execution
-=================
-forks = 8
-each task is targeted on 8 servers
-single playbook execution
+1. **Forks (`forks = 8`)**:
+   - Defines how many servers Ansible communicates with simultaneously for each task.
+   - Example: If `forks = 8` and you have 20 servers, Task 1 runs on the first 8 servers, then the next 8 servers, then the remaining 4 servers. Once all 20 finish Task 1, Ansible moves to Task 2.
 
-serial=5
-8 forks -> 5
-run entire playbook
-next 3 servers
+2. **Serial (`serial = 5`)**:
+   - Defines rolling execution at the entire playbook level (batch processing).
+   - Example: If you have 8 servers and `serial = 5`:
+     - Batch 1 (5 servers): Runs the complete playbook from start to finish.
+     - Batch 2 (remaining 3 servers): Runs the complete playbook after Batch 1 succeeds.
+   - Useful for zero-downtime rolling updates (e.g., updating web servers behind a load balancer).
 
-ansible does not have the state
+Ansible Disadvantages & Need for IaaC (Terraform)
+=================================================
+1. **Ansible does not have state management**:
+   - Ansible does not track what it created or the state of remote infrastructure.
+   - If an instance is deleted outside Ansible, it does not automatically detect the drift or keep track of existing resources like a state file does.
+2. **Configuration vs Provisioning**:
+   - **Terraform (IaaC)**: Best suited for Infrastructure Creation / Provisioning (VPC, Subnets, EC2, RDS, IAM).
+     - Flow: Create infra -> Track state in remote store (e.g., S3 bucket) -> Compare state on every run and apply only necessary changes.
+   - **Ansible (Configuration Management)**: Best suited for connecting to already provisioned servers and configuring packages, files, services, and users.
 
-IaaC
-======
-I created infra -> I keep track of it in store
-again I asked for some change -> compare state and proceed
+Commands:
+# Ansible Vault Commands:
+ansible-vault create vault.yaml                       => To create a new encrypted file.
+ansible-vault encrypt secrets.yaml                    => To encrypt an existing unencrypted file.
+ansible-vault decrypt vault.yaml                      => To decrypt an encrypted file.
+ansible-vault view vault.yaml                         => To view encrypted content without decrypting the file.
+ansible-vault edit vault.yaml                         => To edit encrypted file content directly.
+ansible-playbook -i inventory playbook.yaml --ask-vault-pass => To run a playbook with vault password prompt.
+ansible-playbook -i inventory playbook.yaml --vault-password-file ~/.vault_pass => To supply vault password via file.
 
-Terraform -> creating servers
-Ansible -> connect to servers and configure them
+# Dynamic Inventory Commands:
+ansible-inventory -i aws_ec2.yaml --graph             => To inspect the dynamic inventory hierarchy.
+ansible-inventory -i aws_ec2.yaml --list              => To list all dynamic host details in JSON format.
+ansible all -i aws_ec2.yaml -m ping                   => To ping all dynamically discovered hosts.
+
+# Parallel Execution Commands:
+ansible-playbook -i inventory playbook.yaml -f 10      => To override default forks and run with 10 parallel connections.
+
+Timestamps:
+Include vs Import role = 00:15:00
+Dynamic inventory = 00:45:00
+Ansible Vault = 01:05:00
+Forks vs Serial = 01:20:00
+Interview question = 01:30:00
+QA = 01:32:00
+
+Interview Questions:
+1. What is the difference between `import_role` and `include_role`?
+   - Answer: `import_role` is static (parsed before execution; tags/conditions cascade; cannot use loops). `include_role` is dynamic (evaluated at runtime; tags/conditions do not cascade; supports loops).
+2. Why do we need Dynamic Inventory in AWS cloud environments?
+   - Answer: Auto-scaling environments create and terminate EC2 instances dynamically. Static inventory files cannot track changing IP addresses. Dynamic inventory plugins query AWS APIs in real time to fetch running instances based on tags and regions.
+3. What is the difference between `forks` and `serial` in Ansible?
+   - Answer: `forks` controls task-level parallel thread execution across servers. `serial` controls playbook-level batching for rolling updates.
+4. Why is Ansible not ideal for infrastructure creation compared to Terraform?
+   - Answer: Ansible lacks a centralized state management engine to detect infrastructure drift. Terraform is purpose-built for declarative infrastructure provisioning with state tracking, dependency graphs, and lifecycle management.
+
+Mistakes & Learning:
+1. Typo in file naming: Named `valut.yaml` instead of `vault.yaml`. Always verify naming conventions before encrypting.
+2. Loops on `import_role`: Tried using `loop` on `import_role` which caused a syntax error. Switched to `include_role` to iterate over roles dynamically.
+3. Vault password prompt: Forgot `--ask-vault-pass` when running vault-protected playbooks, leading to authentication failure.
+
+Doubts Link Clarification AI chat link:
